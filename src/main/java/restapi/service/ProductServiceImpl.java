@@ -6,7 +6,7 @@ import restapi.dto.Product;
 import restapi.exception.NoSuchProductException;
 import restapi.exception.ProductAlreadyExistsException;
 import restapi.exception.ValidationFailedException;
-import restapi.repository.ImaginaryRepository;
+import restapi.repository.ProductRepository;
 
 import java.util.ArrayList;
 
@@ -17,20 +17,20 @@ public class ProductServiceImpl implements ProductService {
      * Validator class(bad practice).
      */
     @Autowired
-    private final Validator validator = new Validator();
+    private final ValidationService validationService = new ValidationService();
 
     /**
      * Fake repository(handmade).
      */
     @Autowired
-    private final ImaginaryRepository imaginaryRepository = new ImaginaryRepository();
+    private ProductRepository productRepository;
 
     /**
      * Method for list of all products.
      * @return - ArrayList
      */
     public ArrayList<Product> getAllProducts(){
-        return imaginaryRepository.findAllProducts();
+        return productRepository.findAll();
     }
 
     /**
@@ -38,10 +38,7 @@ public class ProductServiceImpl implements ProductService {
      * @return - searchable product.
      */
     public Product getProductById(long id){
-        return imaginaryRepository.getProductList().stream()
-                .filter(product -> product.getId() == id)
-                .findFirst()
-                .orElseThrow(NoSuchProductException::new);
+        return productRepository.findProductById(id);
     }
 
     /**
@@ -55,20 +52,17 @@ public class ProductServiceImpl implements ProductService {
         /*
          * Checking of input data.
          */
-        if(!validator.checkExistenceOfName(imaginaryRepository, product.getName()) || !validator.checkExistenceOfType(imaginaryRepository, product.getType())){
+        if(!validationService.checkExistenceOfName(product.getName()) || !validationService.checkExistenceOfType(product.getType())){
             throw new ValidationFailedException();
         }
         /*
-         * Creating of object and addition id fake database;
-         */
-        product.setId(imaginaryRepository.getIdentifierCounter());
-        /*
          * Checking for existence of same object.
          */
-        if(validator.checkExistenceOfProduct(imaginaryRepository, product)){
+        if(validationService.checkExistenceOfProduct(productRepository, product)){
             throw new ProductAlreadyExistsException();
+        } else {
+            productRepository.save(product);
         }
-        imaginaryRepository.addProduct(product);
     }
 
     /**
@@ -81,15 +75,20 @@ public class ProductServiceImpl implements ProductService {
         /*
          * Checking of input data.
          */
-        if(!validator.checkExistenceOfName(imaginaryRepository, product.getName()) || !validator.checkExistenceOfType(imaginaryRepository, product.getType())){
+        if(!validationService.checkExistenceOfName(product.getName()) || !validationService.checkExistenceOfType(product.getType())){
             throw new ValidationFailedException();
         }
-        imaginaryRepository.getProductList().stream()
-                .filter(prd -> prd.getId() == putRequestBodyId)
-                .findFirst()
-                .orElseThrow(NoSuchProductException::new);
-        product.setId(putRequestBodyId);
-        imaginaryRepository.updProduct(product);
+        Product productToUpdate = productRepository.getProductById(putRequestBodyId);
+        productToUpdate.setName(product.getName());
+        productToUpdate.setType(product.getType());
+        /*
+         * Checking for existence of same object.
+         */
+        if(validationService.checkExistenceOfProduct(productRepository, productToUpdate)){
+            throw new ProductAlreadyExistsException();
+        } else {
+            productRepository.save(productToUpdate);
+        }
     }
 
     /**
@@ -101,10 +100,13 @@ public class ProductServiceImpl implements ProductService {
      * @param id - identifier of deletable product.
      */
     public void deleteProduct(long id){
-        imaginaryRepository.getProductList().stream()
-                .filter(product -> product.getId() == id)
-                .findFirst()
-                .orElseThrow(NoSuchProductException::new);
-        imaginaryRepository.delProduct(id);
+        /*
+         * Checking for existence of same object.
+         */
+        if(validationService.checkExistenceOfProductById(productRepository, id)){
+            productRepository.delete(productRepository.findProductById(id));
+        } else {
+            throw new NoSuchProductException();
+        }
     }
 }
