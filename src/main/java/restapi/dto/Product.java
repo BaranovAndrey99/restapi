@@ -5,13 +5,20 @@ import restapi.transfer.New;
 import restapi.transfer.UpdateName;
 import restapi.transfer.UpdateType;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 
+@Entity
 public class Product {
     /**
      * Annotations @Null and @NotNull work only with interfaces New and UpdateName in different cases.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Null(groups = {New.class})
     @NotNull(groups = {UpdateName.class})
     @ApiModelProperty(notes = "The database generated product ID")
@@ -34,7 +41,7 @@ public class Product {
         this.type = type;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -58,29 +65,4 @@ public class Product {
         this.type = type;
     }
 
-    /**
-     * Equals by identifier
-     * @param product - comparable product
-     * @return - result
-     */
-    public boolean idEquals(Product product){
-        if(this.id == product.id){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Equals by identifier
-     * @param product - comparable product
-     * @return - result
-     */
-    public boolean nameAndTypeEquals(Product product){
-        if(this.name.equals(product.getName())&&this.type.equals(product.getType())){
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
