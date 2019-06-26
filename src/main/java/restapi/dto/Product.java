@@ -1,15 +1,27 @@
-package restapi.domain;
+package restapi.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.stereotype.Component;
+import restapi.transfer.New;
+import restapi.transfer.UpdateName;
+import restapi.transfer.UpdateType;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 public class Product {
+    /**
+     * Annotations @Null and @NotNull work only with interfaces New and UpdateName in different cases.
+     */
+    @Null(groups = {New.class})
+    @NotNull(groups = {UpdateName.class})
     @ApiModelProperty(notes = "The database generated product ID")
-    private long id;
+    private Long id;
 
+    @NotNull(groups = {New.class, UpdateName.class})
     @ApiModelProperty(notes = "The product name")
     private String name;
 
+    @NotNull(groups = {New.class, UpdateType.class})
     @ApiModelProperty(notes = "The product type")
     private String type;
 

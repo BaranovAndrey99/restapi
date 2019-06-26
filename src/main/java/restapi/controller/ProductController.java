@@ -3,17 +3,15 @@ package restapi.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import restapi.domain.PostRequestBody;
-import restapi.domain.Product;
-import restapi.exception.NoSuchProductException;
-import restapi.exception.ProductAlreadyExistsException;
-import restapi.exception.ValidationFailedException;
-import restapi.repository.ImaginaryRepository;
-import restapi.validation.Validator;
+import restapi.dto.Product;
+import restapi.service.ProductServiceImpl;
+import restapi.transfer.New;
+import restapi.transfer.UpdateName;
+import restapi.transfer.UpdateType;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * RestController for requests for products.
@@ -22,18 +20,13 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequestMapping("/product")
 @Api(value="rest-api", description="Operations with products")
 public class ProductController {
-    /**
-     * Fake repository(handmade).
-     */
-    @Autowired
-    private final ImaginaryRepository imaginaryRepository = new ImaginaryRepository();
 
-    @Autowired
-    private final Validator validator = new Validator();
+
     /**
-     * Automatically increasing identifier
+     * service for working with db.
      */
-    private AtomicLong identifierCounter = new AtomicLong();
+    @Autowired
+    private final ProductServiceImpl productService = new ProductServiceImpl();
 
     /**
      * Method, which lists all products in JSON
@@ -42,7 +35,7 @@ public class ProductController {
     @ApiOperation(value = "Listing of all products in system")
     @GetMapping
     public ArrayList<Product> getAllProducts(){
-        return imaginaryRepository.findAllProducts();
+        return productService.getAllProducts();
     }
 
     /**
@@ -52,10 +45,7 @@ public class ProductController {
     @ApiOperation(value = "Product search by identifier")
     @GetMapping("{id}")
     public Product getProductById(@PathVariable long id) {
-        return imaginaryRepository.getProductList().stream()
-                .filter(product -> product.getId() == id)
-                .findFirst()
-                .orElseThrow(NoSuchProductException::new);
+        return productService.getProductById(id);
     }
 
     /**
@@ -63,30 +53,23 @@ public class ProductController {
      * First step - creation of product.
      * Second step - addition in repository"
      * Third step - object return.
-     * @param postRequestBody - body of request
-     * @return - new Product.
+     * @param product - body of POST request.
      */
     @ApiOperation(value = "Product creation")
     @PostMapping
-    public Product createProduct(@RequestBody PostRequestBody postRequestBody){
-        /*
-         * Checking of input data.
-         */
-        if(!validator.checkExistenceOfName(imaginaryRepository, postRequestBody.getName()) || !validator.checkExistenceOfType(imaginaryRepository, postRequestBody.getType())){
-            throw new ValidationFailedException();
-        }
-        /*
-         * Creating of object and addition id fake database;
-         */
-        Product product = new Product(identifierCounter.incrementAndGet(), postRequestBody.getName(), postRequestBody.getType());
-        /*
-         * Checking for existence of same object.
-         */
-        if(validator.checkExistenceOfProduct(imaginaryRepository, product)){
-            throw new ProductAlreadyExistsException();
-        }
-        imaginaryRepository.addProduct(product);
-        return product;
+    public void createProduct(@Validated(New.class) @RequestBody Product product){
+        productService.createProduct(product);
+    }
+
+    /**
+     * Method for updating of product.
+     * Throws exception if not found object
+     * @param product - body of PUT request.
+     */
+    @PutMapping
+    @ApiOperation(value = "Product update by identifier with description of new parameters")
+    public void updateProduct(@Validated({UpdateName.class, UpdateType.class}) @RequestBody Product product){
+        productService.updateProduct(product);
     }
 
     /**
@@ -96,36 +79,10 @@ public class ProductController {
      * Second step - deleting of object.
      * Third step - return of list of all products for check.
      * @param id - identifier of deletable product.
-     * @return - updated list.
      */
     @DeleteMapping("{id}")
     @ApiOperation(value = "Product removal")
-    public ArrayList<Product> deleteProduct(@PathVariable long id){
-        imaginaryRepository.getProductList().stream()
-                .filter(product -> product.getId() == id)
-                .findFirst()
-                .orElseThrow(NoSuchProductException::new);
-        imaginaryRepository.delProduct(id);
-        return imaginaryRepository.findAllProducts();
-    }
-
-    /**
-     * Method for updating of product.
-     * Throws exception if not found object
-     * @param id - identifier of updatable product.
-     * @param newName - new Name of updatable product or old name.
-     * @param newType - new Type of updatable product or old type.
-     */
-    @PutMapping("{id}")
-    @ApiOperation(value = "Product update by identifier with description of new parameters")
-    public void updateProduct(@PathVariable long id,
-                              @RequestParam(value = "name") String newName,
-                              @RequestParam(value = "type") String newType){
-        imaginaryRepository.getProductList().stream()
-                .filter(product -> product.getId() == id)
-                .findFirst()
-                .orElseThrow(NoSuchProductException::new);
-        Product product = new Product(id, newName, newType);
-        imaginaryRepository.updProduct(product);
+    public void deleteProduct(@PathVariable long id){
+        productService.deleteProduct(id);
     }
 }
