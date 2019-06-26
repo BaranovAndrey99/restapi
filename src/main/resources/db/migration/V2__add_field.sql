@@ -1,0 +1,2 @@
+ALTER TABLE product
+ADD COLUMN new_column VARCHAR(255) NULL;
