@@ -1,5 +1,6 @@
 package restapi.repository;
 
+import org.springframework.stereotype.Repository;
 import restapi.domain.Product;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,15 +12,16 @@ import java.util.Iterator;
  * This class contains empty constructor, getter, setter, and methods for
  *      addition and deleting of elements of list.
  */
+@Repository
 public class ImaginaryRepository {
 
-    private ArrayList<String> productNames = new ArrayList<>(Arrays.asList(
+    private final ArrayList<String> productNames = new ArrayList<>(Arrays.asList(
             "Молоко", "Кефир", "Масло",
             "Колбаса", "Свинина", "Сосиски",
             "Яблоко", "Груша", "Апельсин",
             "Огурец", "Томат", "Капуста")
     );
-    private ArrayList<String> productTypes = new ArrayList<>(Arrays.asList(
+    private final ArrayList<String> productTypes = new ArrayList<>(Arrays.asList(
             "Молоко",
             "Мясо",
             "Фрукты",

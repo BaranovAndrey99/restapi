@@ -1,5 +1,6 @@
 package restapi.validation;
 
+import org.springframework.stereotype.Component;
 import restapi.domain.Product;
 import restapi.repository.ImaginaryRepository;
 
@@ -8,6 +9,7 @@ import java.util.Iterator;
 /**
  * Class for validation of requests input data.
  */
+@Component
 public class Validator {
     /**
      * Check of existence of name of product.

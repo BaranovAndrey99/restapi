@@ -1,6 +1,7 @@
 package restapi.domain;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.stereotype.Component;
 
 public class Product {
     @ApiModelProperty(notes = "The database generated product ID")
