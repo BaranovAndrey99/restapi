@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import restapi.domain.PostRequestBody;
 import restapi.domain.Product;
 import restapi.exception.NoSuchProductException;
 import restapi.exception.ProductAlreadyExistsException;
@@ -25,10 +26,10 @@ public class ProductController {
      * Fake repository(handmade).
      */
     @Autowired
-    private ImaginaryRepository imaginaryRepository;
+    private final ImaginaryRepository imaginaryRepository = new ImaginaryRepository();
 
     @Autowired
-    private Validator validator;
+    private final Validator validator = new Validator();
     /**
      * Automatically increasing identifier
      */
@@ -62,24 +63,22 @@ public class ProductController {
      * First step - creation of product.
      * Second step - addition in repository"
      * Third step - object return.
-     * @param name - name of product.
-     * @param type - type of product.
+     * @param postRequestBody - body of request
      * @return - new Product.
      */
     @ApiOperation(value = "Product creation")
     @PostMapping
-    public Product createProduct(@RequestParam(value = "name") String name,
-                                 @RequestParam(value = "type") String type){
+    public Product createProduct(@RequestBody PostRequestBody postRequestBody){
         /*
          * Checking of input data.
          */
-        if(!validator.checkExistenceOfName(imaginaryRepository, name) || !validator.checkExistenceOfType(imaginaryRepository, type)){
+        if(!validator.checkExistenceOfName(imaginaryRepository, postRequestBody.getName()) || !validator.checkExistenceOfType(imaginaryRepository, postRequestBody.getType())){
             throw new ValidationFailedException();
         }
         /*
          * Creating of object and addition id fake database;
          */
-        Product product = new Product(identifierCounter.incrementAndGet(), name, type);
+        Product product = new Product(identifierCounter.incrementAndGet(), postRequestBody.getName(), postRequestBody.getType());
         /*
          * Checking for existence of same object.
          */
