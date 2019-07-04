@@ -1,13 +1,14 @@
 package restapi.service;
 
-import restapi.dto.Product;
-
-import java.util.ArrayList;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import restapi.dto.ProductDto;
+import restapi.dto.ResponseEntityDto;
 
 public interface ProductService {
-    ArrayList<Product> getAllProducts();
-    Product getProductById(long id);
-    void createProduct(Product product);
-    void updateProduct(Product product);
-    void deleteProduct(long id);
+    ResponseEntity<ResponseEntityDto> getAllProducts();
+    ResponseEntity<ResponseEntityDto> getProductById(long id);
+    ResponseEntity<ResponseEntityDto> createProduct(ProductDto productDto);
+    ResponseEntity<ResponseEntityDto> updateProduct(ProductDto productDto);
+    ResponseEntity<ResponseEntityDto> deleteProduct(long id);
 }

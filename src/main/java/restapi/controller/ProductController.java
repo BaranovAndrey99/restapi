@@ -3,15 +3,16 @@ package restapi.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import restapi.dto.Product;
-import restapi.service.ProductServiceImpl;
-import restapi.transfer.New;
-import restapi.transfer.UpdateName;
-import restapi.transfer.UpdateType;
+import restapi.dto.ProductDto;
+import restapi.dto.ResponseEntityDto;
+import restapi.service.ProductService;
+import restapi.valid.ConstraintSequence;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 
 /**
  * RestController for requests for products.
@@ -23,66 +24,64 @@ public class ProductController {
 
 
     /**
-     * service for working with db.
+     * Constructor-based DI for service for working with db.
      */
+    private ProductService productService;
+
     @Autowired
-    private final ProductServiceImpl productService = new ProductServiceImpl();
+    public ProductController(ProductService productService){
+        this.productService = productService;
+    }
 
     /**
      * Method, which lists all products in JSON
-     * @return - list of products.
+     * @return - response entity with list of products.
      */
     @ApiOperation(value = "Listing of all products in system")
     @GetMapping
-    public ArrayList<Product> getAllProducts(){
+    public ResponseEntity<ResponseEntityDto> getAllProducts(){
         return productService.getAllProducts();
     }
 
     /**
-     * Method, which gets product by id.
-     * @return - searchable product.
+     * Method for getting product by id.
+     * @return - response entity with searchable product.
      */
     @ApiOperation(value = "Product search by identifier")
     @GetMapping("{id}")
-    public Product getProductById(@PathVariable long id) {
+    public ResponseEntity<ResponseEntityDto> getProductById(@PathVariable long id) {
         return productService.getProductById(id);
     }
 
     /**
-     * Method, which create new product.
-     * First step - creation of product.
-     * Second step - addition in repository"
-     * Third step - object return.
-     * @param product - body of POST request.
+     * Method for creating of product.
+     * @param productDto - response entity of POST request.
      */
     @ApiOperation(value = "Product creation")
     @PostMapping
-    public void createProduct(@Validated(New.class) @RequestBody Product product){
-        productService.createProduct(product);
+    public ResponseEntity<ResponseEntityDto> createProduct(@Validated(ConstraintSequence.class) @RequestBody ProductDto productDto){
+        return productService.createProduct(productDto);
     }
 
     /**
      * Method for updating of product.
      * Throws exception if not found object
-     * @param product - body of PUT request.
+     * @param productDto - response entity of PUT request.
      */
     @PutMapping
     @ApiOperation(value = "Product update by identifier with description of new parameters")
-    public void updateProduct(@Validated({UpdateName.class, UpdateType.class}) @RequestBody Product product){
-        productService.updateProduct(product);
+    public ResponseEntity<ResponseEntityDto> updateProduct(@Validated(ConstraintSequence.class) @RequestBody ProductDto productDto){
+        return productService.updateProduct(productDto);
     }
 
     /**
-     * Method, which delete product by identifier with special method equals, which compares objects by id.
-     * Throws exception if not found object
-     * First step - creation of object with requried id.
-     * Second step - deleting of object.
-     * Third step - return of list of all products for check.
+     * Method for deleting of product by identifier.
      * @param id - identifier of deletable product.
+     * @return - response entity of DELETE request.
      */
     @DeleteMapping("{id}")
     @ApiOperation(value = "Product removal")
-    public void deleteProduct(@PathVariable long id){
-        productService.deleteProduct(id);
+    public ResponseEntity<ResponseEntityDto> deleteProduct(@PathVariable long id){
+        return productService.deleteProduct(id);
     }
 }
