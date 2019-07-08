@@ -3,26 +3,25 @@ package restapi.entity;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
-import java.lang.annotation.Target;
 
 @Entity
-@Table(name = "product")
-public class Product {
+@Table(name = "kindofproduct")
+public class KindOfProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @ApiModelProperty(notes = "The database generated product ID")
+    @ApiModelProperty(notes = "The database generated kind of product ID")
     private Long id;
 
-    @ApiModelProperty(notes = "The product name")
+    @ApiModelProperty(notes = "The kind of product name")
     private String name;
-    
-    @ApiModelProperty(notes = "The product type")
+
+    @ApiModelProperty(notes = "The kind of product type")
     private String type;
 
-    public Product() {
+    public KindOfProduct() {
     }
 
-    public Product(long id, String name, String type) {
+    public KindOfProduct(Long id, String kindOfName, String kindOfType) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -32,7 +31,7 @@ public class Product {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -51,5 +50,4 @@ public class Product {
     public void setType(String type) {
         this.type = type;
     }
-
 }

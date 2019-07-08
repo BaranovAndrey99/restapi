@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 import restapi.dto.ProductDto;
 import restapi.dto.ResponseEntityDto;
 import restapi.entity.Product;
+import restapi.exception.ProductCheckingFailedException;
 import restapi.exception.NoSuchProductException;
 import restapi.exception.ProductAlreadyExistsException;
 import restapi.repository.ProductRepository;
-import restapi.service.DataCheckingService;
-import restapi.service.DtoService;
+import restapi.service.KindOfProductService;
+import restapi.service.ProductDtoService;
 import restapi.service.ProductService;
 
 @Service
@@ -20,17 +21,17 @@ public class ProductServiceImpl implements ProductService {
     /**
      * Constructor-based DI for dataCheckingService and productRepository.
      */
-    private DataCheckingService dataCheckingService;
-    private DtoService dtoService;
+    private ProductDtoService productDtoService;
     private ProductRepository productRepository;
+    private KindOfProductService kindOfProductService;
 
     @Autowired
-    public ProductServiceImpl(DataCheckingService dataCheckingService,
-                              DtoService dtoService,
-                              ProductRepository productRepository){
-        this.dataCheckingService = dataCheckingService;
+    public ProductServiceImpl(ProductDtoService productDtoService,
+                              ProductRepository productRepository,
+                              KindOfProductService kindOfProductService){
         this.productRepository = productRepository;
-        this.dtoService = dtoService;
+        this.productDtoService = productDtoService;
+        this.kindOfProductService = kindOfProductService;
     }
 
 
@@ -52,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
         /*
          * Checking for existence of same object.
          */
-        if(dataCheckingService.checkExistenceOfProductById(productRepository, id)){
+        if(checkExistenceOfProductById(productRepository, id)){
             return new ResponseEntity<>(new ResponseEntityDto("Product was found", productRepository.findProductById(id)), HttpStatus.OK);
         } else {
             throw new NoSuchProductException();
@@ -65,10 +66,13 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ResponseEntity<ResponseEntityDto> createProduct(ProductDto productDto){
-        Product product = dtoService.toEntity(productDto);
-        productRepository.save(product);
-        return new ResponseEntity<>(new ResponseEntityDto("Product was successfully created", null), HttpStatus.OK);
-
+        if(kindOfProductService.checkExistenceOfKindOfProduct(productDto)) {
+            Product product = productDtoService.toProductEntity(productDto);
+            productRepository.save(product);
+            return new ResponseEntity<>(new ResponseEntityDto("Product was successfully created", null), HttpStatus.OK);
+        } else {
+            throw new ProductCheckingFailedException();
+        }
     }
 
     /**
@@ -81,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
         /*
          * Convert DTO to Entity
          */
-        Product product = dtoService.toEntity(productDto);
+        Product product = productDtoService.toProductEntity(productDto);
 
         long putRequestBodyId = product.getId();
 
@@ -94,7 +98,7 @@ public class ProductServiceImpl implements ProductService {
         /*
          * Checking for existence of same object.
          */
-        if(dataCheckingService.checkExistenceOfProduct(productRepository, productToUpdate)){
+        if(checkExistenceOfProduct(productRepository, productToUpdate)){
             throw new ProductAlreadyExistsException();
         } else {
             productRepository.save(productToUpdate);
@@ -112,11 +116,37 @@ public class ProductServiceImpl implements ProductService {
         /*
          * Checking for existence of same object.
          */
-        if(dataCheckingService.checkExistenceOfProductById(productRepository, id)){
+        if(checkExistenceOfProductById(productRepository, id)){
             productRepository.delete(productRepository.findProductById(id).get(0));
             return new ResponseEntity<>(new ResponseEntityDto("Product was successfully deleted", null), HttpStatus.OK);
         } else {
             throw new NoSuchProductException();
         }
+    }
+
+    /**
+     * Check of existence of same object in db by name and type.
+     * @param productRepository - fake bd
+     * @param product - product, which existence we would to check.
+     * @return - boolean
+     */
+    @Override
+    public boolean checkExistenceOfProduct(ProductRepository productRepository, Product product){
+        if(productRepository.findProductByNameAndType(product.getName(), product.getType()).isEmpty()){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Check of existence of same object in db by identifier.
+     * @param productRepository - fake bd
+     * @param id - id of product, which existence we would to check.
+     * @return - boolean
+     */
+    @Override
+    public boolean checkExistenceOfProductById(ProductRepository productRepository, long id){
+        return !productRepository.findProductById(id).isEmpty();
     }
 }

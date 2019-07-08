@@ -4,13 +4,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import restapi.dto.ProductDto;
 import restapi.dto.ResponseEntityDto;
 import restapi.service.ProductService;
-import restapi.valid.ConstraintSequence;
 
 import javax.validation.Valid;
 
@@ -59,7 +56,7 @@ public class ProductController {
      */
     @ApiOperation(value = "Product creation")
     @PostMapping
-    public ResponseEntity<ResponseEntityDto> createProduct(@Validated(ConstraintSequence.class) @RequestBody ProductDto productDto){
+    public ResponseEntity<ResponseEntityDto> createProduct(@Valid @RequestBody ProductDto productDto){
         return productService.createProduct(productDto);
     }
 
@@ -70,7 +67,7 @@ public class ProductController {
      */
     @PutMapping
     @ApiOperation(value = "Product update by identifier with description of new parameters")
-    public ResponseEntity<ResponseEntityDto> updateProduct(@Validated(ConstraintSequence.class) @RequestBody ProductDto productDto){
+    public ResponseEntity<ResponseEntityDto> updateProduct(@Valid @RequestBody ProductDto productDto){
         return productService.updateProduct(productDto);
     }
 

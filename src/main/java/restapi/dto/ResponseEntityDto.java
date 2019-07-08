@@ -1,6 +1,5 @@
 package restapi.dto;
 
-import org.springframework.http.HttpStatus;
 import restapi.entity.Product;
 
 import java.util.List;

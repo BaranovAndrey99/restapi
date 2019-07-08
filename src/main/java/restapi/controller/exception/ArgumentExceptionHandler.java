@@ -1,4 +1,4 @@
-package restapi.controller;
+package restapi.controller.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

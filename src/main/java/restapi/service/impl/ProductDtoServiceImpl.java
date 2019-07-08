@@ -5,27 +5,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import restapi.dto.ProductDto;
 import restapi.entity.Product;
-import restapi.service.DtoService;
+import restapi.service.ProductDtoService;
+
+/**
+ * Service for translating entity <-> dto.
+ */
 
 @Service
-public class DtoServiceImpl implements DtoService {
+public class ProductDtoServiceImpl implements ProductDtoService {
     /**
      * Constructor based DI for ModelMapper;
      */
     private ModelMapper modelMapper;
 
     @Autowired
-    public DtoServiceImpl(ModelMapper modelMapper) {
+    public ProductDtoServiceImpl(ModelMapper modelMapper) {
        this.modelMapper = modelMapper;
     }
 
     @Override
-    public Product toEntity(ProductDto productDto){
+    public Product toProductEntity(ProductDto productDto){
         return modelMapper.map(productDto, Product.class);
     }
 
     @Override
-    public ProductDto toDto(Product product){
+    public ProductDto toProductDto(Product product){
         return modelMapper.map(product, ProductDto.class);
     }
+
 }
