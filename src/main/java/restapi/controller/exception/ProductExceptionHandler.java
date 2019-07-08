@@ -1,4 +1,4 @@
-package restapi.controller;
+package restapi.controller.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +11,17 @@ import restapi.dto.ResponseEntityDto;
 import restapi.exception.NoSuchProductException;
 import restapi.exception.NullProductArgsException;
 import restapi.exception.ProductAlreadyExistsException;
+import restapi.exception.ProductCheckingFailedException;
 
 /**
  * Class for exception handling.
  */
 @ControllerAdvice
+<<<<<<< HEAD:src/main/java/restapi/controller/MainExceptionHandler.java
 public class MainExceptionHandler {
+=======
+public class ProductExceptionHandler extends ResponseEntityExceptionHandler {
+>>>>>>> Mistakes Correction 2.1.:src/main/java/restapi/controller/exception/ProductExceptionHandler.java
 
     /**
      * Product not find for GET, PUT, DELETE.
@@ -39,6 +44,7 @@ public class MainExceptionHandler {
     }
 
     /**
+<<<<<<< HEAD:src/main/java/restapi/controller/MainExceptionHandler.java
      * Exception handler for @Valid
      * @param ex - default exception
      * @return - responseEntity for exception of @Valid.
@@ -74,4 +80,14 @@ public class MainExceptionHandler {
         return new ResponseEntity<>(new ResponseEntityDto<>("Internal server error", null),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
+=======
+     * Wrong name or type of product.
+     * @return - responseEntity
+     */
+    @ExceptionHandler(ProductCheckingFailedException.class)
+    public ResponseEntity<ResponseEntityDto> handleProductCheckingFailedException(){
+        return new ResponseEntity<>(new ResponseEntityDto("Wrong name or type of product", null),
+                HttpStatus.BAD_REQUEST);
+    }
+>>>>>>> Mistakes Correction 2.1.:src/main/java/restapi/controller/exception/ProductExceptionHandler.java
 }

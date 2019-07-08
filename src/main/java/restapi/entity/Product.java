@@ -18,7 +18,7 @@ public class Product {
     @ApiModelProperty(notes = "The product name")
     @NotNull(message = "Name can't be empty.")
     private String name;
-    
+
     @ApiModelProperty(notes = "The product type")
     @NotNull(message = "Type can't be empty.")
     private String type;

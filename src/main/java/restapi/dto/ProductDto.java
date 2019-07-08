@@ -10,11 +10,9 @@ public class ProductDto {
     private final Long id;
 
     @NotNull(message = "Name can't be empty.")
-    @NameExistence(groups = ExtendedValidation.class)
     private final String name;
 
     @NotNull(message = "Type can't be empty.")
-    @TypeExistence(groups = ExtendedValidation.class)
     private final String type;
 
     public ProductDto() {

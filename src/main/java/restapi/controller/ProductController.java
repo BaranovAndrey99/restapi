@@ -5,14 +5,14 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import restapi.dto.ProductDto;
 import restapi.dto.ResponseEntityDto;
 import restapi.exception.NoSuchProductException;
 import restapi.exception.ProductAlreadyExistsException;
 import restapi.service.ProductService;
-import restapi.valid.ConstraintSequence;
+
+import javax.validation.Valid;
 
 /**
  * RestController for requests for products.
@@ -61,7 +61,7 @@ public class ProductController {
      */
     @ApiOperation(value = "Product creation")
     @PostMapping
-    public ResponseEntity<ResponseEntityDto> createProduct(@Validated(ConstraintSequence.class) @RequestBody ProductDto productDto) throws ProductAlreadyExistsException {
+    public ResponseEntity<ResponseEntityDto> createProduct(@Valid @RequestBody ProductDto productDto) throws ProductAlreadyExistsException {
         ResponseEntityDto responseEntityDto = productService.createProduct(productDto);
         return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
     }
@@ -73,7 +73,7 @@ public class ProductController {
      */
     @PutMapping
     @ApiOperation(value = "Product update by identifier with description of new parameters")
-    public ResponseEntity<ResponseEntityDto> updateProduct(@Validated(ConstraintSequence.class) @RequestBody ProductDto productDto) throws ProductAlreadyExistsException, NoSuchProductException{
+    public ResponseEntity<ResponseEntityDto> updateProduct(@Valid @RequestBody ProductDto productDto) throws ProductAlreadyExistsException, NoSuchProductException{
         ResponseEntityDto responseEntityDto = productService.updateProduct(productDto);
         return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
     }
