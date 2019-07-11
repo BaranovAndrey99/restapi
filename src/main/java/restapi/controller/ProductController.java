@@ -3,13 +3,16 @@ package restapi.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import restapi.dto.ProductDto;
 import restapi.dto.ResponseEntityDto;
+import restapi.exception.NoSuchProductException;
+import restapi.exception.ProductAlreadyExistsException;
 import restapi.service.ProductService;
-
-import javax.validation.Valid;
+import restapi.valid.ConstraintSequence;
 
 /**
  * RestController for requests for products.
@@ -23,7 +26,7 @@ public class ProductController {
     /**
      * Constructor-based DI for service for working with db.
      */
-    private ProductService productService;
+    private final ProductService productService;
 
     @Autowired
     public ProductController(ProductService productService){
@@ -37,7 +40,8 @@ public class ProductController {
     @ApiOperation(value = "Listing of all products in system")
     @GetMapping
     public ResponseEntity<ResponseEntityDto> getAllProducts(){
-        return productService.getAllProducts();
+        ResponseEntityDto responseEntityDto = productService.findAllProducts();
+        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
     }
 
     /**
@@ -46,8 +50,9 @@ public class ProductController {
      */
     @ApiOperation(value = "Product search by identifier")
     @GetMapping("{id}")
-    public ResponseEntity<ResponseEntityDto> getProductById(@PathVariable long id) {
-        return productService.getProductById(id);
+    public ResponseEntity<ResponseEntityDto> getProductById(@PathVariable Long id) throws NoSuchProductException {
+        ResponseEntityDto responseEntityDto = productService.findProductById(id);
+        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
     }
 
     /**
@@ -56,8 +61,9 @@ public class ProductController {
      */
     @ApiOperation(value = "Product creation")
     @PostMapping
-    public ResponseEntity<ResponseEntityDto> createProduct(@Valid @RequestBody ProductDto productDto){
-        return productService.createProduct(productDto);
+    public ResponseEntity<ResponseEntityDto> createProduct(@Validated(ConstraintSequence.class) @RequestBody ProductDto productDto) throws ProductAlreadyExistsException {
+        ResponseEntityDto responseEntityDto = productService.createProduct(productDto);
+        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
     }
 
     /**
@@ -67,8 +73,9 @@ public class ProductController {
      */
     @PutMapping
     @ApiOperation(value = "Product update by identifier with description of new parameters")
-    public ResponseEntity<ResponseEntityDto> updateProduct(@Valid @RequestBody ProductDto productDto){
-        return productService.updateProduct(productDto);
+    public ResponseEntity<ResponseEntityDto> updateProduct(@Validated(ConstraintSequence.class) @RequestBody ProductDto productDto) throws ProductAlreadyExistsException, NoSuchProductException{
+        ResponseEntityDto responseEntityDto = productService.updateProduct(productDto);
+        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
     }
 
     /**
@@ -78,7 +85,8 @@ public class ProductController {
      */
     @DeleteMapping("{id}")
     @ApiOperation(value = "Product removal")
-    public ResponseEntity<ResponseEntityDto> deleteProduct(@PathVariable long id){
-        return productService.deleteProduct(id);
+    public ResponseEntity<ResponseEntityDto> deleteProduct(@PathVariable Long id) throws NoSuchProductException {
+        ResponseEntityDto responseEntityDto = productService.deleteProduct(id);
+        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
     }
 }
