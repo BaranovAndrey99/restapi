@@ -1,14 +1,14 @@
 package restapi.service;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import restapi.dto.ProductDto;
 import restapi.dto.ResponseEntityDto;
+import restapi.exception.NoSuchProductException;
+import restapi.exception.ProductAlreadyExistsException;
 
 public interface ProductService {
-    ResponseEntity<ResponseEntityDto> getAllProducts();
-    ResponseEntity<ResponseEntityDto> getProductById(long id);
-    ResponseEntity<ResponseEntityDto> createProduct(ProductDto productDto);
-    ResponseEntity<ResponseEntityDto> updateProduct(ProductDto productDto);
-    ResponseEntity<ResponseEntityDto> deleteProduct(long id);
+    ResponseEntityDto findAllProducts();
+    ResponseEntityDto findProductById(Long id) throws NoSuchProductException;
+    ResponseEntityDto createProduct(ProductDto productDto) throws ProductAlreadyExistsException;
+    ResponseEntityDto updateProduct(ProductDto productDto) throws NoSuchProductException, ProductAlreadyExistsException;
+    ResponseEntityDto deleteProduct(Long id) throws NoSuchProductException;
 }

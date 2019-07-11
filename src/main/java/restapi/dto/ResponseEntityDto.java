@@ -1,35 +1,24 @@
 package restapi.dto;
 
-import org.springframework.http.HttpStatus;
-import restapi.entity.Product;
+/**
+ * Entity, which uses for response for requests.
+ * Unified response.
+ * @param <T> - Generic - Entity/entities, which we want to send in response.
+ */
+public class ResponseEntityDto<T> {
+    private final T responseBodies;
+    private final String responseMessage;
 
-import java.util.List;
-
-public class ResponseEntityDto {
-    private List<Product> responseBodies;
-    private String responseMessage;
-
-    public ResponseEntityDto() {
-    }
-
-    public ResponseEntityDto(String responseMessage, List<Product> responseBodies) {
+    public ResponseEntityDto(String responseMessage, T responseBodies) {
         this.responseMessage = responseMessage;
         this.responseBodies = responseBodies;
     }
 
-    public List<Product> getResponseBodies() {
+    public T getResponseBodies() {
         return responseBodies;
-    }
-
-    public void setResponseBodies(List<Product> responseBodies) {
-        this.responseBodies = responseBodies;
     }
 
     public String getResponseMessage() {
         return responseMessage;
-    }
-
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
     }
 }
