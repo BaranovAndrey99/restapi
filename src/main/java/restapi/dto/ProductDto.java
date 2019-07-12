@@ -1,9 +1,5 @@
 package restapi.dto;
 
-import restapi.valid.groups.ExtendedValidation;
-import restapi.valid.constraints.NameExistence;
-import restapi.valid.constraints.TypeExistence;
-
 import javax.validation.constraints.NotNull;
 
 public class ProductDto {
@@ -20,6 +16,7 @@ public class ProductDto {
         this.name = null;
         this.type = null;
     }
+
     public ProductDto(Long id, String name, String type) {
         this.id = id;
         this.name = name;

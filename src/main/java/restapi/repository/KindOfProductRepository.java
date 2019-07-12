@@ -7,5 +7,9 @@ import restapi.entity.KindOfProduct;
 @Repository
 public interface KindOfProductRepository extends CrudRepository<KindOfProduct, Long> {
     KindOfProduct findKindOfProductByNameAndType(String name, String type);
-    boolean existsById(long id);
+    boolean existsKindOfProductByNameAndType(String name, String type);
+
+    KindOfProduct findKindOfProductById(Long id);
+    boolean existsKindOfProductById(Long id);
+
 }

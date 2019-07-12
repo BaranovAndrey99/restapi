@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import restapi.dto.ProductDto;
 import restapi.dto.ResponseEntityDto;
-import restapi.exception.NoSuchProductException;
-import restapi.exception.ProductAlreadyExistsException;
-import restapi.service.ProductService;
+import restapi.exception.product.ProductNotExistsException;
+import restapi.exception.product.ProductAlreadyExistsException;
+import restapi.service.product.ProductService;
 
 import javax.validation.Valid;
 
@@ -40,8 +40,7 @@ public class ProductController {
     @ApiOperation(value = "Listing of all products in system")
     @GetMapping
     public ResponseEntity<ResponseEntityDto> getAllProducts(){
-        ResponseEntityDto responseEntityDto = productService.findAllProducts();
-        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
+        return new ResponseEntity<>(productService.findAllProducts(), HttpStatus.OK);
     }
 
     /**
@@ -50,9 +49,8 @@ public class ProductController {
      */
     @ApiOperation(value = "Product search by identifier")
     @GetMapping("{id}")
-    public ResponseEntity<ResponseEntityDto> getProductById(@PathVariable Long id) throws NoSuchProductException {
-        ResponseEntityDto responseEntityDto = productService.findProductById(id);
-        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
+    public ResponseEntity<ResponseEntityDto> getProductById(@PathVariable Long id) throws ProductNotExistsException {
+        return new ResponseEntity<>(productService.findProductById(id), HttpStatus.OK);
     }
 
     /**
@@ -62,8 +60,7 @@ public class ProductController {
     @ApiOperation(value = "Product creation")
     @PostMapping
     public ResponseEntity<ResponseEntityDto> createProduct(@Valid @RequestBody ProductDto productDto) throws ProductAlreadyExistsException {
-        ResponseEntityDto responseEntityDto = productService.createProduct(productDto);
-        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
+        return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.OK);
     }
 
     /**
@@ -73,9 +70,8 @@ public class ProductController {
      */
     @PutMapping
     @ApiOperation(value = "Product update by identifier with description of new parameters")
-    public ResponseEntity<ResponseEntityDto> updateProduct(@Valid @RequestBody ProductDto productDto) throws ProductAlreadyExistsException, NoSuchProductException{
-        ResponseEntityDto responseEntityDto = productService.updateProduct(productDto);
-        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
+    public ResponseEntity<ResponseEntityDto> updateProduct(@Valid @RequestBody ProductDto productDto) throws ProductAlreadyExistsException, ProductNotExistsException {
+        return new ResponseEntity<>(productService.updateProduct(productDto), HttpStatus.OK);
     }
 
     /**
@@ -85,8 +81,29 @@ public class ProductController {
      */
     @DeleteMapping("{id}")
     @ApiOperation(value = "Product removal")
-    public ResponseEntity<ResponseEntityDto> deleteProduct(@PathVariable Long id) throws NoSuchProductException {
-        ResponseEntityDto responseEntityDto = productService.deleteProduct(id);
-        return new ResponseEntity<>(responseEntityDto, HttpStatus.OK);
+    public ResponseEntity<ResponseEntityDto> deleteProduct(@PathVariable Long id) throws ProductNotExistsException {
+        return new ResponseEntity<>(productService.deleteProduct(id), HttpStatus.OK);
+    }
+
+    /* EXCEPTION HANDLERS */
+
+    /**
+     * Product not find for GET, PUT, DELETE.
+     * @return - responseEntity for product not found exception.
+     */
+    @ExceptionHandler(ProductNotExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleProductNotExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Product not found", null),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Product already exists for POST.
+     * @return - responseEntity for product already exists exception.
+     */
+    @ExceptionHandler(ProductAlreadyExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleProductAlreadyExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Product already exists", null),
+                HttpStatus.BAD_REQUEST);
     }
 }

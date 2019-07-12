@@ -1,11 +1,11 @@
-package restapi.service.impl;
+package restapi.service.kindofproduct.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import restapi.dto.KindOfProductDto;
 import restapi.entity.KindOfProduct;
-import restapi.service.KindOfProductDtoService;
+import restapi.service.kindofproduct.KindOfProductDtoService;
 
 /**
  * Service for translating entity <-> dto.
@@ -13,10 +13,8 @@ import restapi.service.KindOfProductDtoService;
 
 @Service
 public class KindOfProductDtoServiceImpl implements KindOfProductDtoService {
-    /**
-     * Constructor based DI for ModelMapper;
-     */
-    private ModelMapper modelMapper;
+
+    private final ModelMapper modelMapper;
 
     @Autowired
     public KindOfProductDtoServiceImpl(ModelMapper modelMapper) {

@@ -1,12 +1,16 @@
 package restapi.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import restapi.dto.KindOfProductDto;
 import restapi.dto.ResponseEntityDto;
-import restapi.service.KindOfProductService;
+import restapi.exception.kindofproduct.KindOfProductAlreadyExistsException;
+import restapi.exception.kindofproduct.KindOfProductNotExistsException;
+import restapi.service.kindofproduct.KindOfProductService;
 
 import javax.validation.Valid;
 
@@ -15,7 +19,7 @@ import javax.validation.Valid;
  */
 
 @RestController
-@RequestMapping("/assortnment")
+@RequestMapping("/assortment")
 @Api(value="rest-api", description="Operations with kinds of products")
 public class KindOfProductController {
     private KindOfProductService kindOfProductService;
@@ -31,7 +35,36 @@ public class KindOfProductController {
      * @return - responseEntity.
      */
     @PostMapping
-    public ResponseEntity<ResponseEntityDto> createKindOfProduct(@Valid @RequestBody KindOfProductDto kindOfProductDto){
-        return kindOfProductService.createKindOfProduct(kindOfProductDto);
+    @ApiOperation(value = "Kind of product creation")
+    public ResponseEntity<ResponseEntityDto> createKindOfProduct(@Valid @RequestBody KindOfProductDto kindOfProductDto) throws KindOfProductAlreadyExistsException{
+        return new ResponseEntity<>(kindOfProductService.createKindOfProduct(kindOfProductDto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    @ApiOperation(value = "Kind of product removal")
+    public ResponseEntity<ResponseEntityDto> deleteKindOfProduct(@PathVariable Long id) throws KindOfProductNotExistsException{
+        return new ResponseEntity<>(kindOfProductService.deleteKindOfProduct(id), HttpStatus.OK);
+    }
+
+    /* EXCEPTION HANDLERS */
+
+    /**
+     * Kind of product not find.
+     * @return - responseEntity for product not found exception.
+     */
+    @ExceptionHandler(KindOfProductNotExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleKindOfProductNotExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Kind of product not found", null),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Product already exists.
+     * @return - responseEntity for product already exists exception.
+     */
+    @ExceptionHandler(KindOfProductAlreadyExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleKindOfProductAlreadyExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Kind of product already exists", null),
+                HttpStatus.BAD_REQUEST);
     }
 }

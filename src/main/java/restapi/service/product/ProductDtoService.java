@@ -1,8 +1,6 @@
-package restapi.service;
+package restapi.service.product;
 
-import restapi.dto.KindOfProductDto;
 import restapi.dto.ProductDto;
-import restapi.entity.KindOfProduct;
 import restapi.entity.Product;
 
 public interface ProductDtoService {

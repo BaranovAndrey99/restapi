@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class Product {
@@ -16,11 +15,9 @@ public class Product {
     private Long id;
 
     @ApiModelProperty(notes = "The product name")
-    @NotNull(message = "Name can't be empty.")
     private String name;
 
     @ApiModelProperty(notes = "The product type")
-    @NotNull(message = "Type can't be empty.")
     private String type;
 
     public Product() {
