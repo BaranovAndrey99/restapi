@@ -22,7 +22,7 @@ import javax.validation.Valid;
 @RequestMapping("/assortment")
 @Api(value="rest-api", description="Operations with kinds of products")
 public class KindOfProductController {
-    private KindOfProductService kindOfProductService;
+    private final KindOfProductService kindOfProductService;
 
     @Autowired
     public KindOfProductController(KindOfProductService kindOfProductService){
