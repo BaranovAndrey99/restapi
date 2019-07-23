@@ -40,7 +40,7 @@ public class KindOfProductServiceImpl implements KindOfProductService {
         }
         KindOfProduct kindOfProduct = kindOfProductDtoService.toKindOfProductEntity(kindOfProductDto);
         kindOfProductRepository.save(kindOfProduct);
-        return new ResponseEntityDto<>("Kind of product was successfully created", null);
+        return new ResponseEntityDto<>("Kind of product was successfully created", kindOfProduct);
     }
 
     /**
@@ -53,7 +53,8 @@ public class KindOfProductServiceImpl implements KindOfProductService {
         if(!kindOfProductCheckingService.isKindOfProductExistsById(id)){
             throw new KindOfProductNotExistsException();
         }
-        kindOfProductRepository.delete(kindOfProductRepository.findKindOfProductById(id));
-        return new ResponseEntityDto<>("Kind of product was successfully deleted", null);
+        KindOfProduct kindOfProduct = kindOfProductRepository.findKindOfProductById(id);
+        kindOfProductRepository.delete(kindOfProduct);
+        return new ResponseEntityDto<>("Kind of product was successfully deleted", kindOfProduct);
     }
 }

@@ -71,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductAlreadyExistsException();
         }
         productRepository.save(product);
-        return new ResponseEntityDto<>("Product was successfully created", null);
+        return new ResponseEntityDto<>("Product was successfully created", product);
 
     }
 
@@ -97,7 +97,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductAlreadyExistsException();
         }
         productRepository.save(productToUpdate);
-        return new ResponseEntityDto<>("Product was successfully updated", null);
+        return new ResponseEntityDto<>("Product was successfully updated", productToUpdate);
     }
 
     /**
@@ -110,7 +110,8 @@ public class ProductServiceImpl implements ProductService {
         if(!productCheckingService.isProductExistsById(id)){
             throw new ProductNotExistsException();
         }
-        productRepository.delete(productRepository.findProductById(id));
-        return new ResponseEntityDto<>("Product was successfully deleted", null);
+        Product product = productRepository.findProductById(id);
+        productRepository.delete(product);
+        return new ResponseEntityDto<>("Product was successfully deleted", product);
     }
 }

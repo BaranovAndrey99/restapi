@@ -9,11 +9,59 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import restapi.dto.ResponseEntityDto;
 import restapi.exception.general.NullArgsException;
+import restapi.exception.kindofproduct.KindOfProductAlreadyExistsException;
+import restapi.exception.kindofproduct.KindOfProductNotExistsException;
+import restapi.exception.product.ProductAlreadyExistsException;
+import restapi.exception.product.ProductNotExistsException;
 
 import java.rmi.UnexpectedException;
 
 @ControllerAdvice
 public class GeneralExceptionHandler {
+
+    /* PRODUCT EXCEPTIONS HANDLERS */
+
+    /**
+     * Product not find for GET, PUT, DELETE.
+     * @return - responseEntity for product not found exception.
+     */
+    @ExceptionHandler(ProductNotExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleProductNotExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Product not found", null),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Product already exists for POST.
+     * @return - responseEntity for product already exists exception.
+     */
+    @ExceptionHandler(ProductAlreadyExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleProductAlreadyExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Product already exists", null),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    /* KIND OF PRODUCT EXCEPTION HANDLERS */
+
+    /**
+     * Kind of product not find.
+     * @return - responseEntity for product not found exception.
+     */
+    @ExceptionHandler(KindOfProductNotExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleKindOfProductNotExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Kind of product not found", null),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Product already exists.
+     * @return - responseEntity for product already exists exception.
+     */
+    @ExceptionHandler(KindOfProductAlreadyExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleKindOfProductAlreadyExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Kind of product already exists", null),
+                HttpStatus.BAD_REQUEST);
+    }
 
     /* ARGUMENT EXCEPTIONS */
 

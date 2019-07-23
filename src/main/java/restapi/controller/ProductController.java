@@ -84,26 +84,4 @@ public class ProductController {
     public ResponseEntity<ResponseEntityDto> deleteProduct(@PathVariable Long id) throws ProductNotExistsException {
         return new ResponseEntity<>(productService.deleteProduct(id), HttpStatus.OK);
     }
-
-    /* EXCEPTION HANDLERS */
-
-    /**
-     * Product not find for GET, PUT, DELETE.
-     * @return - responseEntity for product not found exception.
-     */
-    @ExceptionHandler(ProductNotExistsException.class)
-    protected ResponseEntity<ResponseEntityDto> handleProductNotExistsException(){
-        return new ResponseEntity<>(new ResponseEntityDto<>("Product not found", null),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * Product already exists for POST.
-     * @return - responseEntity for product already exists exception.
-     */
-    @ExceptionHandler(ProductAlreadyExistsException.class)
-    protected ResponseEntity<ResponseEntityDto> handleProductAlreadyExistsException(){
-        return new ResponseEntity<>(new ResponseEntityDto<>("Product already exists", null),
-                HttpStatus.BAD_REQUEST);
-    }
 }
