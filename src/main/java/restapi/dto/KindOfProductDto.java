@@ -2,7 +2,7 @@ package restapi.dto;
 
 import javax.validation.constraints.NotNull;
 
-public class ProductDto {
+public class KindOfProductDto {
     private final Long id;
 
     @NotNull(message = "Name can't be empty.")
@@ -11,22 +11,22 @@ public class ProductDto {
     @NotNull(message = "Type can't be empty.")
     private final String type;
 
-    public ProductDto() {
+    public KindOfProductDto() {
         this.id = null;
         this.name = null;
         this.type = null;
     }
 
-    public ProductDto(Long id, String name, String type) {
-        this.id = id;
-        this.name = name;
-        this.type = type;
+    public KindOfProductDto(String kindOfName, String kindOfType) {
+        this.id = null;
+        this.name = kindOfName;
+        this.type = kindOfType;
     }
 
-    public ProductDto(String name, String type) {
-        this.id = null;
-        this.name = name;
-        this.type = type;
+    public KindOfProductDto(Long id, String kindOfName, String kindOfType) {
+        this.id = id;
+        this.name = kindOfName;
+        this.type = kindOfType;
     }
 
     public Long getId() {

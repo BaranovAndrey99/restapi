@@ -1,18 +1,19 @@
-package restapi.service.impl;
+package restapi.service.product.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import restapi.entity.Product;
-import restapi.exception.NullProductArgsException;
+import restapi.exception.general.NullArgsException;
 import restapi.repository.ProductRepository;
-import restapi.service.DataCheckingService;
+import restapi.service.product.ProductCheckingService;
 
 @Service
-public class DataCheckingServiceImpl implements DataCheckingService {
-    private ProductRepository productRepository;
+public class ProductCheckingServiceImpl implements ProductCheckingService {
+
+    private final ProductRepository productRepository;
 
     @Autowired
-    public DataCheckingServiceImpl(ProductRepository productRepository){
+    public ProductCheckingServiceImpl(ProductRepository productRepository){
         this.productRepository = productRepository;
     }
 
@@ -22,9 +23,9 @@ public class DataCheckingServiceImpl implements DataCheckingService {
      * @return - "true" if product with same name and type exists, "false" if not exists.
      */
     @Override
-    public boolean isProductExistsByNameAndType(Product product){
+    public boolean isProductExistsByNameAndType(Product product) throws NullArgsException{
         if(product.getName() == null || product.getType() == null){
-            throw  new NullProductArgsException();
+            throw  new NullArgsException();
         } else {
             return productRepository.existsProductByNameAndType(product.getName(), product.getType());
         }
