@@ -8,22 +8,25 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import restapi.dto.ResponseEntityDto;
-import restapi.exception.NoSuchProductException;
-import restapi.exception.NullProductArgsException;
-import restapi.exception.ProductAlreadyExistsException;
+import restapi.exception.general.NullArgsException;
+import restapi.exception.kindofproduct.KindOfProductAlreadyExistsException;
+import restapi.exception.kindofproduct.KindOfProductNotExistsException;
+import restapi.exception.product.ProductAlreadyExistsException;
+import restapi.exception.product.ProductNotExistsException;
 
-/**
- * Class for exception handling.
- */
+import java.rmi.UnexpectedException;
+
 @ControllerAdvice
-public class MainExceptionHandler {
+public class GeneralExceptionHandler {
+
+    /* PRODUCT EXCEPTIONS HANDLERS */
 
     /**
      * Product not find for GET, PUT, DELETE.
      * @return - responseEntity for product not found exception.
      */
-    @ExceptionHandler(NoSuchProductException.class)
-    protected ResponseEntity<ResponseEntityDto> handleNoSuchProductException(){
+    @ExceptionHandler(ProductNotExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleProductNotExistsException(){
         return new ResponseEntity<>(new ResponseEntityDto<>("Product not found", null),
                 HttpStatus.BAD_REQUEST);
     }
@@ -36,6 +39,40 @@ public class MainExceptionHandler {
     protected ResponseEntity<ResponseEntityDto> handleProductAlreadyExistsException(){
         return new ResponseEntity<>(new ResponseEntityDto<>("Product already exists", null),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    /* KIND OF PRODUCT EXCEPTION HANDLERS */
+
+    /**
+     * Kind of product not find.
+     * @return - responseEntity for product not found exception.
+     */
+    @ExceptionHandler(KindOfProductNotExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleKindOfProductNotExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Kind of product not found", null),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Product already exists.
+     * @return - responseEntity for product already exists exception.
+     */
+    @ExceptionHandler(KindOfProductAlreadyExistsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleKindOfProductAlreadyExistsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Kind of product already exists", null),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    /* ARGUMENT EXCEPTIONS */
+
+    /**
+     * Exception handler for null parameters of requests
+     * @return - response entity for null arguments of Product.
+     */
+    @ExceptionHandler(NullArgsException.class)
+    protected ResponseEntity<ResponseEntityDto> handleNullProductArgsException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("All necessary parameters must be specified.", null),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -55,21 +92,13 @@ public class MainExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Exception handler for null parameters of requests
-     * @return - response entity for null arguments of Product.
-     */
-    @ExceptionHandler(NullProductArgsException.class)
-    protected ResponseEntity<ResponseEntityDto> handleNullProductArgsException(){
-        return new ResponseEntity<>(new ResponseEntityDto<>("All necessary parameters must be specified.", null),
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    /* UNEXPECTED EXCEPTION */
 
     /**
      * Handler for unexpected exceptions.
      * @return - responseEntity for unexpected exceptions - internal error 500.
      */
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({UnexpectedException.class})
     protected ResponseEntity<ResponseEntityDto> handleUnexpectedError(){
         return new ResponseEntity<>(new ResponseEntityDto<>("Internal server error", null),
                 HttpStatus.INTERNAL_SERVER_ERROR);
