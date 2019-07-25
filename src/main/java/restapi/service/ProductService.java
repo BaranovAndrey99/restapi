@@ -1,13 +1,14 @@
 package restapi.service;
 
-import restapi.dto.Product;
-
-import java.util.ArrayList;
+import restapi.dto.ProductDto;
+import restapi.dto.ResponseEntityDto;
+import restapi.exception.NoSuchProductException;
+import restapi.exception.ProductAlreadyExistsException;
 
 public interface ProductService {
-    ArrayList<Product> getAllProducts();
-    Product getProductById(long id);
-    void createProduct(Product product);
-    void updateProduct(Product product);
-    void deleteProduct(long id);
+    ResponseEntityDto findAllProducts();
+    ResponseEntityDto findProductById(Long id) throws NoSuchProductException;
+    ResponseEntityDto createProduct(ProductDto productDto) throws ProductAlreadyExistsException;
+    ResponseEntityDto updateProduct(ProductDto productDto) throws NoSuchProductException, ProductAlreadyExistsException;
+    ResponseEntityDto deleteProduct(Long id) throws NoSuchProductException;
 }

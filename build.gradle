@@ -20,6 +20,10 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.5.RELEASE'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.5.RELEASE'
     /**
+     * DTO
+     */
+    implementation 'org.modelmapper:modelmapper:2.3.5'
+    /**
      * Swagger
      */
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'

@@ -1,41 +1,32 @@
-package restapi.dto;
+package restapi.entity;
 
 import io.swagger.annotations.ApiModelProperty;
-import restapi.transfer.New;
-import restapi.transfer.UpdateName;
-import restapi.transfer.UpdateType;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 @Entity
 public class Product {
-    /**
-     * Annotations @Null and @NotNull work only with interfaces New and UpdateName in different cases.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Null(groups = {New.class})
-    @NotNull(groups = {UpdateName.class})
     @ApiModelProperty(notes = "The database generated product ID")
     private Long id;
 
-    @NotNull(groups = {New.class, UpdateName.class})
     @ApiModelProperty(notes = "The product name")
+    @NotNull(message = "Name can't be empty.")
     private String name;
-
-    @NotNull(groups = {New.class, UpdateType.class})
+    
     @ApiModelProperty(notes = "The product type")
+    @NotNull(message = "Type can't be empty.")
     private String type;
 
     public Product() {
     }
 
-    public Product(long id, String name, String type) {
+    public Product(Long id, String name, String type) {
         this.id = id;
         this.name = name;
         this.type = type;
