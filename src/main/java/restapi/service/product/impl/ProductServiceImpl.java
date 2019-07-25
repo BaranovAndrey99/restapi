@@ -14,6 +14,7 @@ import restapi.service.product.ProductCheckingService;
 import restapi.service.product.ProductDtoService;
 import restapi.service.product.ProductService;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
