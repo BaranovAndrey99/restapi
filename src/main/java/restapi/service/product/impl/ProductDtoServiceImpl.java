@@ -7,8 +7,11 @@ import restapi.dto.ProductDto;
 import restapi.entity.Product;
 import restapi.service.product.ProductDtoService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Service for translating entity <-> dto.
+ * Service for translating List<entity> <-> List<dto>.
  */
 
 @Service
@@ -21,14 +24,23 @@ public class ProductDtoServiceImpl implements ProductDtoService {
        this.modelMapper = modelMapper;
     }
 
+
     @Override
-    public Product toProductEntity(ProductDto productDto){
-        return modelMapper.map(productDto, Product.class);
+    public List<Product> toProductEntityList(List<ProductDto> productDtoList){
+        List<Product> productList = new ArrayList<>();
+        for(ProductDto productDto : productDtoList){
+            productList.add(modelMapper.map(productDto, Product.class));
+        }
+        return productList;
     }
 
     @Override
-    public ProductDto toProductDto(Product product){
-        return modelMapper.map(product, ProductDto.class);
+    public List<ProductDto> toProductDtoList(List<Product> productList){
+        List<ProductDto> productDtoList = new ArrayList<>();
+        for(Product product : productList){
+            productDtoList.add(modelMapper.map(product, ProductDto.class));
+        }
+        return productDtoList;
     }
 
 }

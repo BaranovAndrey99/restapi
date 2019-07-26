@@ -34,13 +34,13 @@ public class KindOfProductController {
      * @param kindOfProductDto - request body.
      * @return - responseEntity.
      */
-    @PostMapping
+    @PostMapping("/create")
     @ApiOperation(value = "Kind of product creation")
     public ResponseEntity<ResponseEntityDto> createKindOfProduct(@Valid @RequestBody KindOfProductDto kindOfProductDto) throws KindOfProductAlreadyExistsException{
         return new ResponseEntity<>(kindOfProductService.createKindOfProduct(kindOfProductDto), HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete/{id}")
     @ApiOperation(value = "Kind of product removal")
     public ResponseEntity<ResponseEntityDto> deleteKindOfProduct(@PathVariable Long id) throws KindOfProductNotExistsException{
         return new ResponseEntity<>(kindOfProductService.deleteKindOfProduct(id), HttpStatus.OK);

@@ -12,31 +12,32 @@ import javax.validation.constraints.NotNull;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @ApiModelProperty(notes = "The database generated product ID")
     private Long id;
 
-    @ApiModelProperty(notes = "The product name")
     @NotNull(message = "Name can't be empty.")
     private String name;
 
-    @ApiModelProperty(notes = "The product type")
     @NotNull(message = "Type can't be empty.")
     private String type;
+
+    @NotNull(message = "Price can't be empty")
+    private Long price;
 
     public Product() {
     }
 
-    public Product(Long id, String name, String type) {
+    public Product(Long id, String name, String type, Long price) {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.price = price;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,4 +57,11 @@ public class Product {
         this.type = type;
     }
 
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
 }

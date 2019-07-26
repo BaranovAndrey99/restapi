@@ -3,7 +3,7 @@ package restapi.service.kindofproduct.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import restapi.exception.general.NullArgsException;
-import restapi.repository.KindOfProductRepository;
+import restapi.repository.kindofproduct.KindOfProductRepository;
 import restapi.service.kindofproduct.KindOfProductCheckingService;
 
 @Service

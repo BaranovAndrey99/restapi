@@ -2,6 +2,9 @@ package restapi.dto;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Class, which uses for receiving of request for kind of product as request body.
+ */
 public class KindOfProductDto {
     private final Long id;
 

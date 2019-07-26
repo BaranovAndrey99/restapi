@@ -6,8 +6,8 @@ package restapi.dto;
  * @param <T> - Generic - Entity/entities, which we want to send in response.
  */
 public class ResponseEntityDto<T> {
-    private final T responseBodies;
     private final String responseMessage;
+    private final T responseBodies;
 
     public ResponseEntityDto(String responseMessage, T responseBodies) {
         this.responseMessage = responseMessage;
