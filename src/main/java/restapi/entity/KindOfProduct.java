@@ -1,21 +1,18 @@
 package restapi.entity;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "kindofproduct")
+@Table(name = "kind_of_product")
 public class KindOfProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull(message = "Name can't be empty.")
+    @Column(nullable = false)
     private String name;
 
-    @NotNull(message = "Type can't be empty.")
+    @Column(nullable = false)
     private String type;
 
     public KindOfProduct() {

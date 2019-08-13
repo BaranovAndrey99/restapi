@@ -19,7 +19,7 @@ import java.util.List;
  * RestController for requests for products.
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 @Api(value="rest-api", description="Operations with products")
 public class ProductController {
 
@@ -39,7 +39,7 @@ public class ProductController {
      * @return - response entity with list of products.
      */
     @ApiOperation(value = "Listing of all products in system")
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<ResponseEntityDto> getAllProducts(){
         return new ResponseEntity<>(productService.findAllProducts(), HttpStatus.OK);
     }
@@ -49,12 +49,12 @@ public class ProductController {
      * @return - response entity with searchable product.
      */
     @ApiOperation(value = "Product search by identifier")
-    @GetMapping("/byId/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ResponseEntityDto> getProductById(@PathVariable Long id) throws ProductNotExistsException {
         return new ResponseEntity<>(productService.findProductById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/byTypeWithPrice")
+    @GetMapping("/filter")
     public ResponseEntity<ResponseEntityDto> getAllProductsByTypeWithPrice(@RequestParam String type,
                                                                            @RequestParam Long minPrice,
                                                                            @RequestParam Long maxPrice){
@@ -63,23 +63,23 @@ public class ProductController {
 
     /**
      * Method for creating of product.
-     * @param productDtoList - list of request entities of POST request.
+     * @param productDto - request entity of POST request.
      */
     @ApiOperation(value = "Product creation")
-    @PostMapping("/create")
-    public ResponseEntity<ResponseEntityDto> createProduct(@Valid @RequestBody List<ProductDto> productDtoList) throws ProductAlreadyExistsException {
-        return new ResponseEntity<>(productService.createProduct(productDtoList), HttpStatus.OK);
+    @PostMapping
+    public ResponseEntity<ResponseEntityDto> createProduct(@Valid @RequestBody ProductDto productDto) throws ProductAlreadyExistsException {
+        return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.OK);
     }
 
     /**
      * Method for updating of product.
      * Throws exception if not found object
-     * @param productDtoList - list of request entities of PUT request.
+     * @param productDto - request entity of PUT request.
      */
-    @PutMapping("/update")
+    @PutMapping
     @ApiOperation(value = "Product update by identifier with description of new parameters")
-    public ResponseEntity<ResponseEntityDto> updateProduct(@Valid @RequestBody List<ProductDto> productDtoList) throws ProductAlreadyExistsException, ProductNotExistsException {
-        return new ResponseEntity<>(productService.updateProduct(productDtoList), HttpStatus.OK);
+    public ResponseEntity<ResponseEntityDto> updateProduct(@Valid @RequestBody ProductDto productDto) throws ProductAlreadyExistsException, ProductNotExistsException {
+        return new ResponseEntity<>(productService.updateProduct(productDto), HttpStatus.OK);
     }
 
     /**
@@ -87,7 +87,7 @@ public class ProductController {
      * @param id - identifier of deletable product.
      * @return - response entity of DELETE request.
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @ApiOperation(value = "Product removal")
     public ResponseEntity<ResponseEntityDto> deleteProduct(@PathVariable Long id) throws ProductNotExistsException {
         return new ResponseEntity<>(productService.deleteProduct(id), HttpStatus.OK);

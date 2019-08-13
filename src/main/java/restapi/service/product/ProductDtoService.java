@@ -6,6 +6,6 @@ import restapi.entity.Product;
 import java.util.List;
 
 public interface ProductDtoService {
-    List<Product> toProductEntityList(List<ProductDto> productDtoList);
-    List<ProductDto> toProductDtoList(List<Product> productList);
+    Product toProductEntity(ProductDto productDto);
+    ProductDto toProductDto(Product product);
 }

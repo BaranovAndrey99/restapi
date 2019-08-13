@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import restapi.dto.ProductDto;
 import restapi.dto.ResponseEntityDto;
 import restapi.entity.Product;
-import restapi.exception.general.EmptyRequestBodyException;
 import restapi.exception.kindofproduct.KindOfProductNotExistsException;
 import restapi.exception.product.ProductAlreadyExistsException;
 import restapi.exception.product.ProductNotExistsException;
@@ -22,7 +21,6 @@ import restapi.service.product.ProductService;
 import java.util.List;
 
 @Service
-@Transactional
 public class ProductServiceImpl implements ProductService {
 
     private final ProductCheckingService productCheckingService;
@@ -44,20 +42,20 @@ public class ProductServiceImpl implements ProductService {
         this.productRepositoryCriteriaExtension = productRepositoryCriteriaExtension;
     }
 
-
     /**
      * Method, which lists all products in JSON
      * @return - entity with list of products.
      */
-    @Override
     @Transactional(
             isolation = Isolation.READ_COMMITTED,
-            propagation = Propagation.SUPPORTS,
-            rollbackFor = Exception.class
+            propagation = Propagation.REQUIRED,
+            readOnly = true
     )
+    @Override
     public ResponseEntityDto<List<Product>> findAllProducts(){
         return new ResponseEntityDto<>("List of all products.", productRepository.findAll());
     }
+
 
     /**
      * Method for getting product by id.
@@ -67,8 +65,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(
             isolation = Isolation.READ_COMMITTED,
-            propagation = Propagation.SUPPORTS,
-            rollbackFor = Exception.class
+            propagation = Propagation.REQUIRED,
+            readOnly = true
     )
     public ResponseEntityDto<Product> findProductById(Long id) throws ProductNotExistsException{
         Product product = productRepository.findById(id).orElseThrow(ProductNotExistsException::new);
@@ -85,8 +83,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(
             isolation = Isolation.READ_COMMITTED,
-            propagation = Propagation.SUPPORTS,
-            rollbackFor = Exception.class
+            propagation = Propagation.REQUIRED,
+            readOnly = true
     )
     public ResponseEntityDto<List<Product>> findAllProductsByTypeWithPrice(String type, Long minPrice, Long maxPrice){
         return new ResponseEntityDto<>("List of products by type with price constraint",
@@ -95,77 +93,61 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * Method for creating of product.
-     * @param productDtoList - list of entities with bodies of POST request.
+     * @param productDto - entity with body of POST request.
      */
     @Transactional(
             isolation = Isolation.SERIALIZABLE,
-            propagation = Propagation.REQUIRES_NEW,
+            propagation = Propagation.REQUIRED,
             rollbackFor = Exception.class
     )
     @Override
-    public ResponseEntityDto createProduct(List<ProductDto> productDtoList) throws ProductNotExistsException, ProductAlreadyExistsException {
-        /*
-         * If request body is empty - throws exception.
-         */
-        if(productDtoList.isEmpty()){
-            throw new EmptyRequestBodyException();
+    public ResponseEntityDto createProduct(ProductDto productDto) throws ProductNotExistsException, ProductAlreadyExistsException {
+        if(!kindOfProductCheckingService.isKindOfProductExistsByNameAndType(productDto.getName(), productDto.getType())){
+            throw new KindOfProductNotExistsException();
         }
-        List<Product> productList = productDtoService.toProductEntityList(productDtoList);
-        for (Product product: productList) {
-            if(!kindOfProductCheckingService.isKindOfProductExistsByNameAndType(product.getName(), product.getType())){
-                throw new KindOfProductNotExistsException();
-            }
-            if(productCheckingService.isProductExistsByNameAndType(product)){
-                throw new ProductAlreadyExistsException();
-            }
+        Product product = productDtoService.toProductEntity(productDto);
+        if(productCheckingService.isProductExistsByNameAndType(product)){
+            throw new ProductAlreadyExistsException();
         }
-
-        productRepository.saveAll(productList);
-        return new ResponseEntityDto<>("Product was successfully created", productList);
+        productRepository.save(product);
+        return new ResponseEntityDto<>("Product was successfully created", product);
 
     }
 
     /**
      * Method for updating of product.
      * Throws exception if not found object
-     * @param productDtoList - list of request entities of PUT request.
+     * @param productDto - request entity of PUT request.
      */
     @Transactional(
             isolation = Isolation.SERIALIZABLE,
-            propagation = Propagation.REQUIRES_NEW,
+            propagation = Propagation.REQUIRED,
             rollbackFor = Exception.class
     )
     @Override
-    public ResponseEntityDto updateProduct(List<ProductDto> productDtoList) throws ProductNotExistsException, ProductAlreadyExistsException {
+    public ResponseEntityDto updateProduct(ProductDto productDto) throws ProductNotExistsException, ProductAlreadyExistsException {
         /*
-         * If request body is empty - throws exception.
+         * If kind of product not exists - throw exception.
          */
-        if(productDtoList.isEmpty()){
-            throw new EmptyRequestBodyException();
+        if(!kindOfProductCheckingService.isKindOfProductExistsByNameAndType(productDto.getName(), productDto.getType())){
+            throw new KindOfProductNotExistsException();
         }
-        List<Product> productList = productDtoService.toProductEntityList(productDtoList);
-        for (Product product: productList) {
-            /*
-             * If kind of product not exists - throw exception.
-             */
-            if(!kindOfProductCheckingService.isKindOfProductExistsByNameAndType(product.getName(), product.getType())){
-                throw new KindOfProductNotExistsException();
-            }
-            /*
-             * Create product, which will be used as new object.
-             */
-            long putRequestBodyId = product.getId();
-            productRepository.findById(putRequestBodyId).orElseThrow(ProductNotExistsException::new);
-            /*
-             * If product already exists - throw exception.
-             */
-            if(productCheckingService.isProductExistsByNameAndType(product)){
-                throw new ProductAlreadyExistsException();
-            }
+        /*
+         * Create product, which will be used as new object.
+         */
+        long putRequestBodyId = productDto.getId();
+        productRepository.findById(putRequestBodyId).orElseThrow(ProductNotExistsException::new);
+        Product product = productDtoService.toProductEntity(productDto);
+        /*
+         * If product already exists - throw exception.
+         */
+        if(productCheckingService.isProductExistsByNameAndType(product)){
+            throw new ProductAlreadyExistsException();
         }
-        productRepository.saveAll(productList);
-        return new ResponseEntityDto<>("Product was successfully updated", productList);
+        productRepository.save(product);
+        return new ResponseEntityDto<>("Product was successfully updated", product);
     }
+
 
     /**
      * Method for deleting of product by identifier.
@@ -174,7 +156,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Transactional(
             isolation = Isolation.SERIALIZABLE,
-            propagation = Propagation.REQUIRES_NEW,
+            propagation = Propagation.REQUIRED,
             rollbackFor = Exception.class
     )
     @Override

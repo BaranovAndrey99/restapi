@@ -26,21 +26,13 @@ public class ProductDtoServiceImpl implements ProductDtoService {
 
 
     @Override
-    public List<Product> toProductEntityList(List<ProductDto> productDtoList){
-        List<Product> productList = new ArrayList<>();
-        for(ProductDto productDto : productDtoList){
-            productList.add(modelMapper.map(productDto, Product.class));
-        }
-        return productList;
+    public Product toProductEntity(ProductDto productDto){
+        return modelMapper.map(productDto, Product.class);
     }
 
     @Override
-    public List<ProductDto> toProductDtoList(List<Product> productList){
-        List<ProductDto> productDtoList = new ArrayList<>();
-        for(Product product : productList){
-            productDtoList.add(modelMapper.map(product, ProductDto.class));
-        }
-        return productDtoList;
+    public ProductDto toProductDto(Product product){
+        return modelMapper.map(product, ProductDto.class);
     }
 
 }
