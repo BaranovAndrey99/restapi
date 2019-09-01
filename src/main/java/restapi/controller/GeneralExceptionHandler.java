@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import restapi.dto.ResponseEntityDto;
+import restapi.exception.general.EmptyRequestBodyException;
 import restapi.exception.general.NullArgsException;
 import restapi.exception.kindofproduct.KindOfProductAlreadyExistsException;
 import restapi.exception.kindofproduct.KindOfProductNotExistsException;
@@ -64,6 +65,12 @@ public class GeneralExceptionHandler {
     }
 
     /* ARGUMENT EXCEPTIONS */
+
+    @ExceptionHandler(EmptyRequestBodyException.class)
+    protected ResponseEntity<ResponseEntityDto> handleEmptyRequestBodyException(){
+        return new ResponseEntity<>(new ResponseEntityDto<>("Request for create can't be empty", null),
+                HttpStatus.BAD_REQUEST);
+    }
 
     /**
      * Exception handler for null parameters of requests

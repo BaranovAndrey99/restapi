@@ -1,4 +1,4 @@
-package restapi.repository;
+package restapi.repository.kindofproduct;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

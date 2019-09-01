@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import restapi.entity.Product;
 import restapi.exception.general.NullArgsException;
-import restapi.repository.ProductRepository;
+import restapi.repository.product.ProductRepository;
 import restapi.service.product.ProductCheckingService;
 
 @Service
@@ -38,7 +38,7 @@ public class ProductCheckingServiceImpl implements ProductCheckingService {
      */
     @Override
     public boolean isProductExistsById(Long id){
-        return productRepository.existsProductById(id);
+        return productRepository.existsById(id);
     }
 
 }

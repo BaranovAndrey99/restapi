@@ -1,42 +1,38 @@
 package restapi.entity;
 
-import io.swagger.annotations.ApiModelProperty;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @ApiModelProperty(notes = "The database generated product ID")
     private Long id;
 
-    @ApiModelProperty(notes = "The product name")
-    @NotNull(message = "Name can't be empty.")
+    @Column(nullable = false)
     private String name;
 
-    @ApiModelProperty(notes = "The product type")
-    @NotNull(message = "Type can't be empty.")
+    @Column(nullable = false)
     private String type;
+
+    @Column(nullable = false)
+    private Long price;
 
     public Product() {
     }
 
-    public Product(Long id, String name, String type) {
+    public Product(Long id, String name, String type, Long price) {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.price = price;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,4 +52,11 @@ public class Product {
         this.type = type;
     }
 
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
 }

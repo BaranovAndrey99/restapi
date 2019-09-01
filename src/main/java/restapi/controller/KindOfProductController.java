@@ -19,7 +19,7 @@ import javax.validation.Valid;
  */
 
 @RestController
-@RequestMapping("/assortment")
+@RequestMapping("/product-kinds")
 @Api(value="rest-api", description="Operations with kinds of products")
 public class KindOfProductController {
     private final KindOfProductService kindOfProductService;
@@ -40,7 +40,7 @@ public class KindOfProductController {
         return new ResponseEntity<>(kindOfProductService.createKindOfProduct(kindOfProductDto), HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ApiOperation(value = "Kind of product removal")
     public ResponseEntity<ResponseEntityDto> deleteKindOfProduct(@PathVariable Long id) throws KindOfProductNotExistsException{
         return new ResponseEntity<>(kindOfProductService.deleteKindOfProduct(id), HttpStatus.OK);

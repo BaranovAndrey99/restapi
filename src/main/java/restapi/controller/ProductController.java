@@ -8,17 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import restapi.dto.ProductDto;
 import restapi.dto.ResponseEntityDto;
-import restapi.exception.product.ProductNotExistsException;
 import restapi.exception.product.ProductAlreadyExistsException;
+import restapi.exception.product.ProductNotExistsException;
 import restapi.service.product.ProductService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * RestController for requests for products.
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 @Api(value="rest-api", description="Operations with products")
 public class ProductController {
 
@@ -48,14 +49,21 @@ public class ProductController {
      * @return - response entity with searchable product.
      */
     @ApiOperation(value = "Product search by identifier")
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ResponseEntityDto> getProductById(@PathVariable Long id) throws ProductNotExistsException {
         return new ResponseEntity<>(productService.findProductById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<ResponseEntityDto> getAllProductsByTypeWithPrice(@RequestParam String type,
+                                                                           @RequestParam Long minPrice,
+                                                                           @RequestParam Long maxPrice){
+        return new ResponseEntity<>(productService.findAllProductsByTypeWithPrice(type, minPrice, maxPrice), HttpStatus.OK);
+    }
+
     /**
      * Method for creating of product.
-     * @param productDto - response entity of POST request.
+     * @param productDto - request entity of POST request.
      */
     @ApiOperation(value = "Product creation")
     @PostMapping
@@ -66,7 +74,7 @@ public class ProductController {
     /**
      * Method for updating of product.
      * Throws exception if not found object
-     * @param productDto - response entity of PUT request.
+     * @param productDto - request entity of PUT request.
      */
     @PutMapping
     @ApiOperation(value = "Product update by identifier with description of new parameters")
@@ -79,7 +87,7 @@ public class ProductController {
      * @param id - identifier of deletable product.
      * @return - response entity of DELETE request.
      */
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ApiOperation(value = "Product removal")
     public ResponseEntity<ResponseEntityDto> deleteProduct(@PathVariable Long id) throws ProductNotExistsException {
         return new ResponseEntity<>(productService.deleteProduct(id), HttpStatus.OK);

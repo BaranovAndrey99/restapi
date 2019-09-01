@@ -7,7 +7,7 @@ import restapi.dto.ResponseEntityDto;
 import restapi.entity.KindOfProduct;
 import restapi.exception.kindofproduct.KindOfProductAlreadyExistsException;
 import restapi.exception.kindofproduct.KindOfProductNotExistsException;
-import restapi.repository.KindOfProductRepository;
+import restapi.repository.kindofproduct.KindOfProductRepository;
 import restapi.service.kindofproduct.KindOfProductCheckingService;
 import restapi.service.kindofproduct.KindOfProductDtoService;
 import restapi.service.kindofproduct.KindOfProductService;
